@@ -1,8 +1,7 @@
 <template>
   <div class="docker">
     <div
-      class="docker__item"
-      :class="{ 'docker__item--active': index === 0 }"
+      :class="{ 'docker__item': true, 'docker__item--active': index === 0 }"
       v-for="(item, index) in dockerList"
       :key="item.icon"
     >
@@ -27,7 +26,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '../../style/viriables.scss';
 .docker {
   display: flex;
