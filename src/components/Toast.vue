@@ -1,5 +1,5 @@
 <template>
-  <div class="toast">{{ message }}</div>
+  <div class="toast">{{ toastMessage }}</div>
 </template>
 
 <script>
@@ -7,7 +7,10 @@ import { reactive, toRefs } from 'vue'
 
 export default {
   name: 'Toast',
-  props: ['message']
+  setup () {
+    const { toastMessage } = useToastEffect()
+    return { toastMessage }
+  }
 }
 
 export const useToastEffect = () => {
@@ -15,13 +18,13 @@ export const useToastEffect = () => {
     show: false,
     toastMessage: ''
   })
-  const showToast = (message) => {
+  const showToast = (msg) => {
     toastData.show = true
-    toastData.toastMessage = message
-    setTimeout(() => {
-      toastData.show = false
-      toastData.toastMessage = ''
-    }, 2000)
+    toastData.toastMessage = msg
+    // setTimeout(() => {
+    //   toastData.show = false
+    //   toastData.toastMessage = ''
+    // }, 2000)
   }
   const { show, toastMessage } = toRefs(toastData)
   return { show, toastMessage, showToast }

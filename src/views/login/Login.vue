@@ -19,7 +19,7 @@
     </div>
     <div class="wrapper__login-button" @click="handleLogin">登陆</div>
     <div class="wrapper__login-link" @click="handleRegisterClick">立即注册</div>
-    <Toast v-if="show" :message="toastMessage"/>
+    <Toast v-if="show"/>
   </div>
 </template>
 
@@ -34,7 +34,7 @@ const useLoginEffect = (showToast) => {
   const data = reactive({ username: '', password: '' })
   const handleLogin = async () => {
     try {
-      const result = await post('/api/user/login', {
+      const result = await post('/api/user/login1', {
         username: data.username,
         password: data.password
       })
@@ -62,10 +62,10 @@ export default {
   name: 'Login',
   components: { Toast },
   setup () {
-    const { show, toastMessage, showToast } = useToastEffect()
+    const { show, showToast } = useToastEffect()
     const { username, password, handleLogin } = useLoginEffect(showToast)
     const { handleRegisterClick } = useRegisterEffect()
-    return { username, password, show, toastMessage, handleLogin, handleRegisterClick }
+    return { username, password, show, handleLogin, handleRegisterClick }
   }
 }
 </script>
