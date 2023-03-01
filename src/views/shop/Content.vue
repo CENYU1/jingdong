@@ -25,8 +25,11 @@
         </div>
         <div class="product__number">
           <span class="product__number__minus">-</span>
-          0
-          <span class="product__number__plus">+</span>
+          {{ cartList?.[shopId]?.[item._id]?.count || 0 }}
+          <span
+            class="product__number__plus"
+            @click="addItemToCart(shopId, item._id, item)"
+          >+</span>
         </div>
       </div>
     </div>
@@ -36,6 +39,7 @@
 <script>
 import { reactive, toRefs, ref, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
+import { useStore } from 'vuex'
 import { get } from '../../utils/request'
 
 const categories = [
@@ -52,9 +56,7 @@ const useTabEffect = () => {
   return { currentTab, handleTabClick }
 }
 
-const useCurrentListEffect = (currentTab) => {
-  const route = useRoute()
-  const shopId = route.params.id
+const useCurrentListEffect = (currentTab, shopId) => {
   const content = reactive({ list: [] })
   const getContentData = async () => {
     const result = await get(`/api/shop/${shopId}/products`, {
@@ -69,12 +71,24 @@ const useCurrentListEffect = (currentTab) => {
   return { list }
 }
 
+const useCartEffect = () => {
+  const store = useStore()
+  const { cartList } = toRefs(store.state)
+  const addItemToCart = (shopId, productId, productInfo) => {
+    store.commit('addItemToCart', { shopId, productId, productInfo })
+  }
+  return { cartList, addItemToCart }
+}
+
 export default {
   name: 'Content',
   setup () {
+    const route = useRoute()
+    const shopId = route.params.id
     const { currentTab, handleTabClick } = useTabEffect()
-    const { list } = useCurrentListEffect(currentTab)
-    return { categories, list, currentTab, handleTabClick }
+    const { list } = useCurrentListEffect(currentTab, shopId)
+    const { cartList, addItemToCart } = useCartEffect()
+    return { categories, list, currentTab, cartList, shopId, handleTabClick, addItemToCart }
   }
 }
 </script>
