@@ -99,7 +99,6 @@ const useCartEffect = (shopId) => {
         if (product.check) result.price += product.price * product.count
         if (product.count > 0 && !product.check) {
           result.allChecked = false
-          break
         }
       }
     }
