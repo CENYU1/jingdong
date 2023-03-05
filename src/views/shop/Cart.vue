@@ -1,7 +1,24 @@
 <template>
+  <div class="mask" v-if="showChart"/>
   <div class="cart">
-    <div class="product">
+    <div class="product" v-if="showChart">
       <div class="product__header">
+        <div
+          class="product__header__all"
+          @click="setCartItemsChecked(shopId)"
+        >
+          <span
+            class="product__header__icon iconfont"
+            v-html="allChecked ? '&#xe652;': '&#xe6f7;'"
+          />
+          全选
+        </div>
+        <div
+          class="product__header__clear"
+          @click="cleanCartProducts(shopId)"
+        >
+          清空购物车
+        </div>
       </div>
       <template
         v-for="item in productList"
@@ -43,6 +60,7 @@
         <img
           src="http://www.dell-lee.com/imgs/vue3/basket.png"
           class="check__icon__img"
+          @click="handleCartShowChange"
         />
         <div class="check__icon__tag">{{ total }}</div>
       </div>
@@ -55,7 +73,7 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { useCommonCartEffect } from './commonCartEffect'
@@ -90,10 +108,30 @@ const useCartEffect = (shopId) => {
     const tmpProductList = cartList[shopId] || []
     return tmpProductList
   })
+  const allChecked = computed(() => {
+    const productList = cartList[shopId]
+    let result = true
+    if (productList) {
+      for (const key in productList) {
+        const product = productList[key]
+        if (product.count > 0 && !product.check) {
+          result = false
+          break
+        }
+      }
+    }
+    return result
+  })
   const changeCartItemChecked = (shopId, productId) => {
     store.commit('changeCartItemChecked', { shopId, productId })
   }
-  return { total, price, productList, changeCartItemInfo, changeCartItemChecked }
+  const setCartItemsChecked = (shopId) => {
+    store.commit('setCartItemsChecked', { shopId })
+  }
+  const cleanCartProducts = (shopId) => {
+    store.commit('cleanCartProducts', { shopId })
+  }
+  return { total, price, productList, allChecked, changeCartItemInfo, changeCartItemChecked, setCartItemsChecked, cleanCartProducts }
 }
 
 export default {
@@ -101,8 +139,12 @@ export default {
   setup () {
     const route = useRoute()
     const shopId = route.params.id
-    const { total, price, productList, changeCartItemInfo, changeCartItemChecked } = useCartEffect(shopId)
-    return { total, price, productList, shopId, changeCartItemInfo, changeCartItemChecked }
+    const showChart = ref(false)
+    const handleCartShowChange = () => {
+      showChart.value = !showChart.value
+    }
+    const { total, price, productList, allChecked, changeCartItemInfo, changeCartItemChecked, setCartItemsChecked, cleanCartProducts } = useCartEffect(shopId)
+    return { total, price, productList, shopId, allChecked, showChart, changeCartItemInfo, changeCartItemChecked, setCartItemsChecked, cleanCartProducts, handleCartShowChange }
   }
 }
 </script>
@@ -110,11 +152,22 @@ export default {
 <style lang="scss" scoped>
 @import '../../style/viriables.scss';
 @import '../../style/mixins.scss';
+.mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  background: rgba(0, 0, 0, .5);
+  z-index: 1;
+}
 .cart {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
+  z-index: 2;
+  background: #FFF;
 }
 .check {
   display: flex;
@@ -170,8 +223,25 @@ export default {
   flex: 1;
   background: #FFF;
   &__header {
-    height: .52rem;
+    display: flex;
+    line-height: .52rem;
     border-bottom: 1px solid #F1F1F1;
+    font-size: .14rem;
+    color: #333;
+    &__all {
+      width: .64rem;
+      margin-left: .18rem;
+    }
+    &__icon {
+      display: inline-block;
+      color: #0091FF;
+      font-size: .2rem;
+    }
+    &__clear {
+      flex: 1;
+      margin-right: .16rem;
+      text-align: right;
+    }
   }
   &__item {
     position: relative;
