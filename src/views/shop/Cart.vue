@@ -1,7 +1,11 @@
 <template>
-  <div class="mask" v-if="showChart"/>
+  <div
+    class="mask"
+    v-if="showCart"
+    @click="handleCartShowChange"
+  />
   <div class="cart">
-    <div class="product" v-if="showChart">
+    <div class="product" v-if="showCart">
       <div class="product__header">
         <div
           class="product__header__all"
@@ -9,15 +13,15 @@
         >
           <span
             class="product__header__icon iconfont"
-            v-html="allChecked ? '&#xe652;': '&#xe6f7;'"
+            v-html="allChecked ? '&#xe652;': '&#xe667;'"
           />
           全选
         </div>
-        <div
-          class="product__header__clear"
-          @click="cleanCartProducts(shopId)"
-        >
-          清空购物车
+        <div class="product__header__clear">
+          <span
+            class="product__header__clear__btn"
+            @click="() => cleanCartProducts(shopId)"
+          >清空购物车</span>
         </div>
       </div>
       <template
@@ -30,7 +34,7 @@
         >
           <div
             class="product__item__checked iconfont"
-            v-html="item.check ? '&#xe652;': '&#xe6f7;'"
+            v-html="item.check ? '&#xe652;': '&#xe667;'"
             @click="changeCartItemChecked(shopId, item._id)"
           />
           <img class="product__item__img" :src="item.imgUrl" />
@@ -67,7 +71,11 @@
       <div class="check__info">
         总计：<span class="check__info__price">&yen; {{ price }}</span>
       </div>
-      <div class="check__btn">去结算</div>
+      <div class="check__btn">
+        <router-link :to="{ name: 'Home' }">
+          去结算
+        </router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -134,17 +142,22 @@ const useCartEffect = (shopId) => {
   return { total, price, productList, allChecked, changeCartItemInfo, changeCartItemChecked, setCartItemsChecked, cleanCartProducts }
 }
 
+const toggleCartEffect = () => {
+  const showCart = ref(false)
+  const handleCartShowChange = () => {
+    showCart.value = !showCart.value
+  }
+  return { showCart, handleCartShowChange }
+}
+
 export default {
   name: 'Cart',
   setup () {
     const route = useRoute()
     const shopId = route.params.id
-    const showChart = ref(false)
-    const handleCartShowChange = () => {
-      showChart.value = !showChart.value
-    }
     const { total, price, productList, allChecked, changeCartItemInfo, changeCartItemChecked, setCartItemsChecked, cleanCartProducts } = useCartEffect(shopId)
-    return { total, price, productList, shopId, allChecked, showChart, changeCartItemInfo, changeCartItemChecked, setCartItemsChecked, cleanCartProducts, handleCartShowChange }
+    const { showCart, handleCartShowChange } = toggleCartEffect()
+    return { total, price, productList, shopId, allChecked, showCart, changeCartItemInfo, changeCartItemChecked, setCartItemsChecked, cleanCartProducts, handleCartShowChange }
   }
 }
 </script>
@@ -167,7 +180,7 @@ export default {
   right: 0;
   bottom: 0;
   z-index: 2;
-  background: #FFF;
+  background: $bgColor;
 }
 .check {
   display: flex;
@@ -195,7 +208,7 @@ export default {
       border-radius: .1rem;
       font-size: .12rem;
       text-align: center;
-      color: #fff;
+      color: $bgColor;
       transform: scale(.5);
       transform-origin: left center;
     }
@@ -214,33 +227,41 @@ export default {
     width: .98rem;
     background-color: #4FB0F9;
     text-align: center;
-    color: #FFF;
     font-size: .14rem;
+    a {
+      color: $bgColor;
+      text-decoration: none;
+    }
   }
 }
 .product {
   overflow-y: scroll;
   flex: 1;
-  background: #FFF;
+  background: $bgColor;
   &__header {
     display: flex;
     line-height: .52rem;
-    border-bottom: 1px solid #F1F1F1;
+    border-bottom: 1px solid $content-bgColor;
     font-size: .14rem;
-    color: #333;
+    color: $content-fontcolor;
     &__all {
       width: .64rem;
       margin-left: .18rem;
     }
     &__icon {
       display: inline-block;
-      color: #0091FF;
+      margin-right: .1rem;
+      vertical-align: top;
+      color: $btn-bgColor;
       font-size: .2rem;
     }
     &__clear {
       flex: 1;
       margin-right: .16rem;
       text-align: right;
+      &__btn {
+        display: inline-block;
+      }
     }
   }
   &__item {
@@ -252,7 +273,7 @@ export default {
     &__checked {
       line-height: .5rem;
       margin-right: .2rem;
-      color: #0091FF;
+      color: $btn-bgColor;
       font-size: .2rem;
     }
     &__detail {
@@ -289,7 +310,7 @@ export default {
     .product__number {
       position: absolute;
       right: 0;
-      bottom: .12rem;
+      bottom: .26rem;
       &__minus, &__plus
       {
         display: inline-block;
