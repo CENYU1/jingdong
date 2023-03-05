@@ -91,7 +91,7 @@ const useCartEffect = (shopId) => {
   const store = useStore()
   const cartList = store.state.cartList
   const total = computed(() => {
-    const productList = cartList[shopId]
+    const productList = cartList[shopId]?.productList
     let count = 0
     if (productList) {
       for (const i in productList) {
@@ -102,7 +102,7 @@ const useCartEffect = (shopId) => {
     return count
   })
   const price = computed(() => {
-    const productList = cartList[shopId]
+    const productList = cartList[shopId]?.productList
     let count = 0
     if (productList) {
       for (const i in productList) {
@@ -113,11 +113,11 @@ const useCartEffect = (shopId) => {
     return count.toFixed(2)
   })
   const productList = computed(() => {
-    const tmpProductList = cartList[shopId] || []
+    const tmpProductList = cartList[shopId]?.productList || []
     return tmpProductList
   })
   const allChecked = computed(() => {
-    const productList = cartList[shopId]
+    const productList = cartList[shopId]?.productList
     let result = true
     if (productList) {
       for (const key in productList) {
