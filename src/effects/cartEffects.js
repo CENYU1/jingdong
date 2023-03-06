@@ -8,8 +8,15 @@ export const useCommonCartEffect = (shopId) => {
     store.commit('changeCartItemInfo', { shopId, productId, productInfo, num })
   }
   const productList = computed(() => {
-    const tmpProductList = cartList[shopId]?.productList || []
-    return tmpProductList
+    const productList = cartList[shopId]?.productList || {}
+    const notEmptyProductList = {}
+    for (const i in productList) {
+      const product = productList[i]
+      if (product.count > 0) {
+        notEmptyProductList[i] = product
+      }
+    }
+    return notEmptyProductList
   })
   const shopName = computed(() => {
     return cartList[shopId]?.shopName || ''
