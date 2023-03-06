@@ -3,11 +3,11 @@ import { createStore } from 'vuex'
 const setLocalCartList = (state) => {
   const { cartList } = state
   const cartListString = JSON.stringify(cartList)
-  localStorage.cartList = cartListString
+  localStorage.setItem('cartList', cartListString)
 }
 
 const getLocalCartList = () => {
-  return JSON.parse(localStorage.cartList) || {}
+  return JSON.parse(localStorage.getItem('cartList')) || {}
 }
 
 export default createStore({
