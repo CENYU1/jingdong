@@ -1,4 +1,4 @@
-# jingdong
+# 基于 Vue 全家桶的电商前台系统
 
 ## Project setup
 ```
