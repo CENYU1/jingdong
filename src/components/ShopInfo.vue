@@ -1,16 +1,19 @@
 <template>
   <div class="shop">
-    <img :src="item.imgUrl" class="shop__img">
-    <div
-      :class="{ 'shop__content': true, 'shop__content--bordered': !hideBorder }"
-    >
-      <div class="shop__content__title">{{item.name}}</div>
-      <div class="shop__content__tags">
-        <span class="shop__content__tag">月售: {{item.sales}}</span>
-        <span class="shop__content__tag">起送: {{item.expressLimit}}</span>
-        <span class="shop__content__tag">基础运费: {{item.expressPrice}}</span>
+    <div v-for="item in shop" :key="item.id" class="shop-wrapper">
+      <div class="img-container">
+        <img :src="item.imgUrl" class="img-item" />
       </div>
-      <p class="shop__content__highlight">{{item.slogan}}</p>
+      <div class="slogan">
+        <span>
+          {{ item.slogan }}
+        </span>
+      </div>
+      <div class="supermarket">
+        <span>
+          {{ item.name }}
+        </span>
+      </div>
     </div>
   </div>
 </template>
@@ -18,46 +21,106 @@
 <script>
 export default {
   name: 'ShopInfo',
-  props: ['item', 'hideBorder']
+  data() {
+    return {
+      colunm: 2,
+      columnGap: 10,
+      shop: [
+        {
+          id: 1,
+          name: '沃尔玛',
+          slogan: 'wodmaksjnfdfhbsdxhkfhjkdznfkjdsnfj',
+          imgUrl:
+            'https://images.pexels.com/photos/8051987/pexels-photo-8051987.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'
+        },
+        {
+          id: 2,
+          name: '沃尔玛',
+          slogan: '你好',
+          imgUrl:
+            'https://images.pexels.com/photos/10269916/pexels-photo-10269916.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'
+        }
+        /* {
+          id: 3,
+          name: '沃尔玛',
+          slogan: 'wodmaksjnfdfhbsdxhkfhjkdznfkjdsnfj',
+          imgUrl:
+            'https://images.pexels.com/photos/8051987/pexels-photo-8051987.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'
+        },
+        {
+          id: 4,
+          name: '沃尔玛',
+          slogan: 'wodmaksjnfdfhbsdxhkfhjkdznfkjdsnfj',
+          imgUrl:
+            'https://images.pexels.com/photos/9437675/pexels-photo-9437675.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'
+        },
+        {
+          id: 5,
+          name: '沃尔玛',
+          slogan: 'wodmaksjnfdfhbsdxhkfhjkdznfkjdsnfj',
+          imgUrl:
+            'https://images.pexels.com/photos/9437675/pexels-photo-9437675.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'
+        } */
+      ]
+    }
+  },
+  methods: {
+    getColumnWidth() {
+      return (
+        (document.getElementsByClassName('shop')[0].offsetWidth -
+          this.columnGap) /
+          2 /
+          100 +
+        'rem'
+      )
+    },
+    getItemLocation() {
+      const items = document.getElementsByClassName('shop-wrapper')
+      const columnWidth = this.getColumnWidth()
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i]
+        item.style.position = 'absolute'
+        item.style.width = columnWidth
+        if (i < this.colunm) {
+          item.style.top = '0rem'
+          item.style.left =
+            Number(i * (item.offsetWidth + this.columnGap)) / 100 + 'rem'
+          console.log(item.style.top)
+          console.log(item.style.left)
+        }
+      }
+    }
+  },
+  mounted() {
+    this.getItemLocation()
+  }
 }
 </script>
 
 <style lang="scss" scoped>
 @import '../style/viriables.scss';
 .shop {
-  display: flex;
-  padding-top: .12rem;
-  &__img {
-    margin-right: .16rem;
-    width: .56rem;
-    height: .56rem;
+  position: relative;
+  .shop-wrapper {
+    width: 1.645rem;
+    margin-bottom: 0.2rem;
+    .img-container {
+      .img-item {
+        width: 100%;
+        height: 100%;
+        border-radius: 8%;
+      }
+    }
+    .slogan {
+      width: 100%;
+      overflow: hidden;
+    }
+    .supermarket {
+      font-size: 0.16rem;
+    }
   }
-  &__content {
-    flex: 1;
-    padding-bottom: .12rem;
-    &--bordered {
-      border-bottom: .01rem solid $content-bgColor;
-    }
-    &__title {
-      line-height: .22rem;
-      font-size: .16rem;
-      color: $content-fontcolor;
-    }
-    &__tags {
-      margin-top: .08rem;
-      line-height: .18rem;
-      font-size: .13rem;
-      color: $content-fontcolor;
-    }
-    &__tag {
-      margin-right: .16rem;
-    }
-    &__highlight {
-      margin: .08rem 0 0 0;
-      line-height: .18rem;
-      font-size: .13rem;
-      color: $highlight-fontColor;
-    }
+  .shop-wrapper:nth-child(2n + 1) {
+    margin-right: 0.1rem;
   }
 }
 </style>
